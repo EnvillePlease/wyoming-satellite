@@ -80,11 +80,11 @@ async def main() -> None:
 _BLACK = (0, 0, 0)
 _WHITE = (255, 255, 255)
 _RED = (255, 0, 0)
-_YELLOW = (255, 255, 0)
+_YELLOW = (128, 128, 0)
 _BLUE = (0, 0, 255)
-_GREEN = (0, 255, 0)
+_GREEN = (0, 128, 0)
 _PURPLE = (255,0,255)
-_DEEPPURPLE = (75, 0, 130)
+_DEEPPURPLE = (64, 0, 128)
 _TEAL = (0,128,128)
 
 class LEDsEventHandler(AsyncEventHandler):
@@ -110,6 +110,7 @@ class LEDsEventHandler(AsyncEventHandler):
 
         if AudioStart.is_type(event.type):
             self.color(_TEAL)  # or any color you want for "audio start"
+            await asyncio.sleep(2.0)  # show for 2 secs
         elif AudioStop.is_type(event.type):
             self.color(_BLACK)  # or any color you want for "audio stop"
         elif StreamingStarted.is_type(event.type):
@@ -118,12 +119,12 @@ class LEDsEventHandler(AsyncEventHandler):
             self.color(_BLUE)
             await asyncio.sleep(1.0)  # show for 1 sec
         elif VoiceStarted.is_type(event.type):
-            self.color(_PURPLE)
+            self.color(_DEEPPURPLE)
         elif Transcript.is_type(event.type):
             self.color(_GREEN)
             await asyncio.sleep(1.0)  # show for 1 sec
-        elif StreamingStopped.is_type(event.type):
-            self.color(_DEEPPURPLE)
+        # elif StreamingStopped.is_type(event.type):
+        #     self.color(_DEEPPURPLE)
         elif RunSatellite.is_type(event.type):
             self.color(_BLACK)
         elif SatelliteConnected.is_type(event.type):
