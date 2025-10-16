@@ -10,6 +10,7 @@ from typing import Tuple
 
 import gpiozero
 import spidev
+from wyoming.audio import AudioStart, AudioStop
 from wyoming.asr import Transcript
 from wyoming.event import Event
 from wyoming.satellite import (
@@ -46,7 +47,7 @@ async def main() -> None:
         "--led-brightness",
         type=int,
         choices=range(1, 32),
-        default=31,
+        default=16,
         help="LED brightness (integer from 1 to 31)",
     )
     args = parser.parse_args()
@@ -82,7 +83,9 @@ _RED = (255, 0, 0)
 _YELLOW = (255, 255, 0)
 _BLUE = (0, 0, 255)
 _GREEN = (0, 255, 0)
-
+_PURPLE = (255,0,255)
+_DEEPPURPLE = (75, 0, 130)
+_TEAL = (0,128,128)
 
 class LEDsEventHandler(AsyncEventHandler):
     """Event handler for clients."""
@@ -105,18 +108,22 @@ class LEDsEventHandler(AsyncEventHandler):
     async def handle_event(self, event: Event) -> bool:
         _LOGGER.debug(event)
 
-        if StreamingStarted.is_type(event.type):
+        if AudioStart.is_type(event.type):
+            self.color(_TEAL)  # or any color you want for "audio start"
+        elif AudioStop.is_type(event.type):
+            self.color(_BLACK)  # or any color you want for "audio stop"
+        elif StreamingStarted.is_type(event.type):
             self.color(_YELLOW)
         elif Detection.is_type(event.type):
             self.color(_BLUE)
             await asyncio.sleep(1.0)  # show for 1 sec
         elif VoiceStarted.is_type(event.type):
-            self.color(_YELLOW)
+            self.color(_PURPLE)
         elif Transcript.is_type(event.type):
             self.color(_GREEN)
             await asyncio.sleep(1.0)  # show for 1 sec
         elif StreamingStopped.is_type(event.type):
-            self.color(_BLACK)
+            self.color(_DEEPPURPLE)
         elif RunSatellite.is_type(event.type):
             self.color(_BLACK)
         elif SatelliteConnected.is_type(event.type):
